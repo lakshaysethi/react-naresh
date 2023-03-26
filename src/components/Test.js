@@ -1,16 +1,32 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import React, { useState } from 'react'
-import data from '../data.json'
+import { CircularProgress,Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import {client} from '../api/api'
 
 
 function Test() {
+    const [data, setData] = useState([])
+    useEffect(()=>{
+        client("users")
+        .then((res)=>{
+            console.log(res)
+            setTimeout(()=>{
+                setData(res.data)
+            },1000)
+        })
+        .catch((err)=>console.log(err))
 
-    const [myvar, setMyvar] = useState(data)
+    },[])
 
     return (
         <div>
             <h1>Testing React</h1>
-            <TableContainer>
+            
+            {data.length <= 0 ? 
+                (<Box >
+                    <CircularProgress />
+                </Box> )
+            :
+             (<TableContainer>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -22,7 +38,7 @@ function Test() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {myvar.map((el,idx)=>{
+                        {data.map((el,idx)=>{
                             return (<TableRow key={idx}>
                                 <TableCell>{el.id}</TableCell>
                                 <TableCell>{el.name}</TableCell>
@@ -32,8 +48,8 @@ function Test() {
                         })}
                     </TableBody>
                 </Table>
-            </TableContainer>
-
+            </TableContainer>)
+        }
         </div>
     )
 }
